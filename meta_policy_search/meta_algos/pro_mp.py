@@ -43,6 +43,7 @@ class ProMP(MAMLAlgo):
             ):
         super(ProMP, self).__init__(*args, **kwargs)
 
+        # optimize for several step
         self.optimizer = MAMLPPOOptimizer(learning_rate=learning_rate, max_epochs=num_ppo_steps, num_minibatches=num_minibatches)
         self.clip_eps = clip_eps
         self.target_inner_step = target_inner_step
@@ -79,7 +80,8 @@ class ProMP(MAMLAlgo):
 
             """ ----- Build graph for the meta-update ----- """
             self.meta_op_phs_dict = OrderedDict()
-            obs_phs, action_phs, adv_phs, dist_info_old_phs, all_phs_dict = self._make_input_placeholders('step0')
+            obs_phs, action_phs, adv_phs, dist_info_old_phs, all_phs_dict = \
+                self._make_input_placeholders('step0', discrete_action=self.policy.discrete)
             self.meta_op_phs_dict.update(all_phs_dict)
 
             distribution_info_vars, current_policy_params = [], []
@@ -110,7 +112,8 @@ class ProMP(MAMLAlgo):
                 all_inner_kls.append(kls)
 
                 # Create new placeholders for the next step
-                obs_phs, action_phs, adv_phs, dist_info_old_phs, all_phs_dict = self._make_input_placeholders('step%i' % step_id)
+                obs_phs, action_phs, adv_phs, dist_info_old_phs, all_phs_dict = \
+                    self._make_input_placeholders('step%i' % step_id, discrete_action=self.policy.discrete)
                 self.meta_op_phs_dict.update(all_phs_dict)
 
                 # dist_info_vars_for_next_step

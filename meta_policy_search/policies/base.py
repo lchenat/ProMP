@@ -47,6 +47,7 @@ class Policy(Serializable):
         self.policy_params = None
         self._assign_ops = None
         self._assign_phs = None
+        self.discrete = None # need to be specified
 
     def build_graph(self):
         """

@@ -112,7 +112,7 @@ class MAMLAlgo(MetaAlgo):
         self.adapted_policies_params = None
         self.step_sizes = None
 
-    def _make_input_placeholders(self, prefix=''):
+    def _make_input_placeholders(self, prefix='', discrete_action=False):
         """
         Args:
             prefix (str) : a string to prepend to the name of each variable
@@ -133,7 +133,10 @@ class MAMLAlgo(MetaAlgo):
             obs_phs.append(ph)
 
             # action ph
-            ph = tf.placeholder(dtype=tf.float32, shape=[None, self.policy.action_dim], name='action' + '_' + prefix + '_' + str(task_id))
+            if discrete_action:
+                ph = tf.placeholder(dtype=tf.int32, shape=[None, 1], name='action' + '_' + prefix + '_' + str(task_id))
+            else:
+                ph = tf.placeholder(dtype=tf.float32, shape=[None, self.policy.action_dim], name='action' + '_' + prefix + '_' + str(task_id))
             all_phs_dict['%s_task%i_%s' % (prefix, task_id, 'actions')] = ph
             action_phs.append(ph)
 
@@ -168,7 +171,8 @@ class MAMLAlgo(MetaAlgo):
             adapt_input_list_ph (list): list of placeholders
 
         """
-        obs_phs, action_phs, adv_phs, dist_info_old_phs, adapt_input_ph_dict = self._make_input_placeholders('adapt')
+        obs_phs, action_phs, adv_phs, dist_info_old_phs, adapt_input_ph_dict = \
+            self._make_input_placeholders('adapt', discrete_action=self.policy.discrete)
 
         adapted_policies_params = []
 

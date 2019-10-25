@@ -43,6 +43,7 @@ class GaussianMLPPolicy(Policy):
         self.log_std_var = None
         self.action_var = None
         self._dist = None
+        self.discrete = False
 
         self.build_graph()
 
