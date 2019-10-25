@@ -1,0 +1,3 @@
+[submodule "goal_world"]
+	path = goal_world
+	url = git@github.com:hexiang-hu/goal_world.git
